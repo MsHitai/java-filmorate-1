@@ -9,6 +9,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 import ru.yandex.practicum.filmorate.validator.interfaces.NoSpace;
 
 import java.time.LocalDate;
+
 @Data
 public class User {
     private int id;
