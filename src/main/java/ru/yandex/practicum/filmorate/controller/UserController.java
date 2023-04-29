@@ -24,11 +24,11 @@ public class UserController {
 
    @PostMapping
     public User create(@Valid @RequestBody User user) throws ErrorUserException {
-       if(users.containsKey(user.getId())) {
+       if (users.containsKey(user.getId())) {
            log.error("Пользователь с таким id уже есть " + user.toString());
            throw new ErrorUserException("Пользователь с таким id уже есть!");
        }
-       if(user.getName() == null) {
+       if (user.getName() == null) {
           user.setName(user.getLogin());
        }
        user.setId(++id);
@@ -39,7 +39,7 @@ public class UserController {
 
    @PutMapping
    public User update(@Valid @RequestBody User user) throws ErrorUserException {
-      if(!users.containsKey(user.getId())) {
+      if (!users.containsKey(user.getId())) {
          log.error("Пользователя с таким id нет " + user.toString());
          throw new ErrorUserException("Пользователя с таким id нет");
       }
