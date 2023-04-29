@@ -23,7 +23,7 @@ public class FilmController {
 
     @PostMapping
     public Film create(@Valid @RequestBody Film film) throws ErrorFilmException {
-        if(films.containsKey(film.getId())) {
+        if (films.containsKey(film.getId())) {
             log.error("Такой фильм уже есть в базе данных");
             throw new ErrorFilmException("Такой фильм уже есть в базе данных");
         }
@@ -35,7 +35,7 @@ public class FilmController {
 
     @PutMapping
     public Film update(@Valid @RequestBody Film film) throws ErrorFilmException {
-        if(!films.containsKey(film.getId())) {
+        if (!films.containsKey(film.getId())) {
             log.error("Такого фильма нет в базе данных");
             throw new ErrorFilmException("Такого фильма нет в базе данных");
         }
