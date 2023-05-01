@@ -32,7 +32,7 @@ public class UserController {
              log.error("Пользователь с таким id уже есть {}", user);
              throw new ErrorUserException("Пользователь с таким id уже есть!");
        }
-       if(user.getName() == null || user.getName().isEmpty()) {
+       if (user.getName() == null || user.getName().isEmpty()) {
           user.setName(user.getLogin());
        }
        user.setId(++id);
