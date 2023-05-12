@@ -1,5 +1,6 @@
 package ru.yandex.practicum.filmorate.validator;
 
+import lombok.NonNull;
 import ru.yandex.practicum.filmorate.validator.interfaces.ValidDate;
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
@@ -9,7 +10,7 @@ public class DateValidator implements ConstraintValidator<ValidDate, LocalDate> 
     private final LocalDate minDateValue = LocalDate.of(1895, 12, 28);
 
     @Override
-    public boolean isValid(LocalDate date, ConstraintValidatorContext context) {
+    public boolean isValid(@NonNull LocalDate date, ConstraintValidatorContext context) {
             return !date.isBefore(minDateValue);
     }
 }

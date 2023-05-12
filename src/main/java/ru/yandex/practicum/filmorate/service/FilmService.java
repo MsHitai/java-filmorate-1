@@ -3,6 +3,7 @@ package ru.yandex.practicum.filmorate.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import ru.yandex.practicum.filmorate.exception.ErrorFilmException;
 import ru.yandex.practicum.filmorate.exception.ErrorUserException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.storage.FilmStorage;
@@ -16,15 +17,15 @@ import java.util.stream.Collectors;
 public class FilmService {
     private final FilmStorage filmStorage;
 
-    public Film addNewLike(Long filmId, Long userId) {
-        Film film = filmStorage.getFilm(filmId);
+    public Film addNewLike(int filmId, int userId) {
+        Film film = findById(filmId);
 
         film.getLikes().add(userId);
         return film;
     }
 
-    public Film removeLike(Long filmId, Long userId) {
-        Film film = filmStorage.getFilm(filmId);
+    public Film removeLike(int filmId, int userId) {
+        Film film = findById(filmId);
 
         if (!film.getLikes().contains(userId)) {
             log.error("Пользователя с таким id нет {}", userId);
@@ -41,8 +42,21 @@ public class FilmService {
                 .collect(Collectors.toList());
     }
 
-    public FilmStorage getFilmStorage() {
-        return filmStorage;
+    public List<Film> findAll() {
+        return filmStorage.findAll();
     }
 
+    public Film create(Film film) {
+        return filmStorage.create(film);
+    }
+
+    public Film update(Film film) {
+        findById(film.getId());
+        return filmStorage.update(film);
+    }
+
+    public Film findById(int filmId) {
+        return filmStorage.findById(filmId)
+                .orElseThrow(() -> new ErrorFilmException("Такого фильма нет в базе данных"));
+    }
 }

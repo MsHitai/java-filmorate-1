@@ -7,10 +7,8 @@ import ru.yandex.practicum.filmorate.exception.ErrorUserException;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.UserStorage;
 
-import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -18,9 +16,9 @@ import java.util.Set;
 public class UserService {
     private final UserStorage userStorage;
 
-    public User addNewFriend(Long id, Long friendId) {
-        User user = userStorage.getUser(id);
-        User friend = userStorage.getUser(friendId);
+    public User addNewFriend(int id, int friendId) {
+        User user = findById(id);
+        User friend = findById(friendId);
 
         user.getFriends().add(friendId);
         friend.getFriends().add(id);
@@ -28,39 +26,53 @@ public class UserService {
         return user;
     }
 
-    public User removeFriend(Long id, Long friendId) {
-        User user = userStorage.getUser(id);
-        User friend = userStorage.getUser(friendId);
+    public User removeFriend(int id, int friendId) {
+        User user = findById(id);
+        User friend = findById(friendId);
 
-        if (!user.getFriends().contains(friendId)) {
+        if (!user.getFriends().remove(friendId)) {
             log.error("Друга с таким id нет {}", friendId);
             throw new ErrorUserException("Друга с таким id нет");
         }
-        user.getFriends().remove(friendId);
         friend.getFriends().remove(id);
         return user;
     }
 
-    public List<User> getFriends(Long id) {
-        List<User> friends = new ArrayList<>();
+    public List<User> getFriends(int id) {
+        return findById(id).getFriends().stream()
+                .map(this::findById)
+                .collect(Collectors.toList());
+    }
 
-        for (Long friendId : userStorage.getUser(id).getFriends()) {
-            User friend = userStorage.getUser(friendId);
-            friends.add(friend);
+    public List<User> getMutualFriends(int id, int otherId) {
+        return getFriends(id).stream()
+                .filter(getFriends(otherId)::contains)
+                .collect(Collectors.toList());
+    }
+
+    public List<User> findAll() {
+        return userStorage.findAll();
+    }
+
+    public User create(User user) {
+        makeNameALoginIfNameIsEmpty(user);
+        return userStorage.create(user);
+    }
+
+    public User update(User user) {
+        findById(user.getId());
+        makeNameALoginIfNameIsEmpty(user);
+        return userStorage.update(user);
+    }
+
+    public User findById(int id) {
+       return userStorage.findById(id)
+               .orElseThrow(() -> new ErrorUserException("Пользователя с таким id нет"));
+    }
+
+    private void makeNameALoginIfNameIsEmpty(User user) {
+        if (user.getName() == null || user.getName().isEmpty()) {
+            user.setName(user.getLogin());
         }
-        return friends;
-    }
-
-    public Set<User> getMutualFriends(Long id, Long otherId) {
-        Set<User> mutualFriends = new HashSet<>(getFriends(id));
-
-        mutualFriends.addAll(getFriends(otherId));
-        mutualFriends.remove(userStorage.getUser(id));
-        mutualFriends.remove(userStorage.getUser(otherId));
-        return mutualFriends;
-    }
-
-    public UserStorage getUserStorage() {
-        return userStorage;
     }
 }
