@@ -1,6 +1,5 @@
 package ru.yandex.practicum.filmorate.validator;
 
-import lombok.NonNull;
 import ru.yandex.practicum.filmorate.validator.interfaces.ValidDate;
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
