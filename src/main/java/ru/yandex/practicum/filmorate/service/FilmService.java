@@ -27,11 +27,10 @@ public class FilmService {
     public Film removeLike(int filmId, int userId) {
         Film film = findById(filmId);
 
-        if (!film.getLikes().contains(userId)) {
+        if (!film.getLikes().remove(userId)) {
             log.error("Пользователя с таким id нет {}", userId);
             throw new ErrorUserException("Пользователя с таким id нет");
         }
-        film.getLikes().remove(userId);
         return film;
     }
 

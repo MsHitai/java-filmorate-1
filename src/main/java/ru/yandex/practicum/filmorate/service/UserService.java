@@ -7,6 +7,7 @@ import ru.yandex.practicum.filmorate.exception.ErrorUserException;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.UserStorage;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -45,8 +46,9 @@ public class UserService {
     }
 
     public List<User> getMutualFriends(int id, int otherId) {
+        List<User> friendsOfOtherId = new ArrayList<>(getFriends(otherId));
         return getFriends(id).stream()
-                .filter(getFriends(otherId)::contains)
+                .filter(friendsOfOtherId::contains)
                 .collect(Collectors.toList());
     }
 
@@ -71,7 +73,7 @@ public class UserService {
     }
 
     private void makeNameALoginIfNameIsEmpty(User user) {
-        if (user.getName() == null || user.getName().isEmpty()) {
+        if (user.getName() == null || user.getName().isBlank()) {
             user.setName(user.getLogin());
         }
     }
