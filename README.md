@@ -1,8 +1,7 @@
 # java-filmorate
-Template repository for Filmorate project.
 ## Схема базы данных проекта
-![](/drawSQL-filmorate-export-2023-05-20.png)
-Пример SQL запроса к БД:
+![](drawSQL-filmorate-export-2023-05-20.png)
+### Примеры SQL запросов к БД:
 Топ 5 самых популярных фильмов
 ```
 SELECT
