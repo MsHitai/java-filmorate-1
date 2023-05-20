@@ -1,4 +1,5 @@
 # java-filmorate
+Template repository for Filmorate project.
 ## Схема базы данных проекта
 ![Схема](/drawSQL-filmorate-export-2023-05-20.png)
 ### Пример SQL запроса к БД:
