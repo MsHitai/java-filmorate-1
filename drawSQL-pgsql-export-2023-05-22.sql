@@ -1,8 +1,8 @@
 CREATE TABLE "users"(
     "user_id" BIGINT NOT NULL,
-    "name" VARCHAR(255) NOT NULL,
-    "login" VARCHAR(255) NOT NULL,
-    "email" VARCHAR(255) NOT NULL,
+    "name" VARCHAR(55) NOT NULL,
+    "login" VARCHAR(55) NOT NULL,
+    "email" VARCHAR(55) NOT NULL,
     "birthday" DATE NOT NULL
 );
 ALTER TABLE
@@ -15,18 +15,18 @@ ALTER TABLE
     "likes" ADD PRIMARY KEY("film_id");
 CREATE TABLE "films"(
     "film_id" BIGINT NOT NULL,
-    "name" VARCHAR(255) NOT NULL,
-    "description" VARCHAR(255) NOT NULL,
+    "name" VARCHAR(55) NOT NULL,
+    "description" VARCHAR(200) NOT NULL,
     "release_date" DATE NOT NULL,
     "duration" INTEGER NOT NULL,
     "genre_id" INTEGER NOT NULL,
-    "rating_id" VARCHAR(255) NOT NULL
+    "rating_id" INTEGER NOT NULL
 );
 ALTER TABLE
     "films" ADD PRIMARY KEY("film_id");
 CREATE TABLE "rating"(
     "rating_id" INTEGER NOT NULL,
-    "name" VARCHAR(255) NOT NULL
+    "name" VARCHAR(55) NOT NULL
 );
 ALTER TABLE
     "rating" ADD PRIMARY KEY("rating_id");
@@ -39,7 +39,7 @@ ALTER TABLE
     "friends" ADD PRIMARY KEY("user_id");
 CREATE TABLE "genre"(
     "genre_id" INTEGER NOT NULL,
-    "name" VARCHAR(255) NOT NULL
+    "name" VARCHAR(55) NOT NULL
 );
 ALTER TABLE
     "genre" ADD PRIMARY KEY("genre_id");
