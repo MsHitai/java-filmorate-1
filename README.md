@@ -1,6 +1,6 @@
 # java-filmorate
 ## Схема базы данных проекта
-![](drawSQL-filmorate-export-2023-05-22.png)
+![](src/main/resources/schema.png)
 - Films
 Содержит данные о фильмах
 - Genre

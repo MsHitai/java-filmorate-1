@@ -1,24 +1,22 @@
 package ru.yandex.practicum.filmorate.model;
 
-import lombok.Builder;
 import lombok.Data;
-import net.minidev.json.annotate.JsonIgnore;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.validation.annotation.Validated;
-import ru.yandex.practicum.filmorate.validator.interfaces.ValidDate;
+import ru.yandex.practicum.filmorate.validation.interfaces.ValidDate;
 
-import javax.validation.constraints.*;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Positive;
+import javax.validation.constraints.Size;
 import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Set;
 
 @Data
-@Builder
 @Validated
 public class Film {
-    private int id;
-    @JsonIgnore
-    private final Set<Integer> likes = new HashSet<>();
+    private long id;
     @NotBlank(message = "Название не должно быть пустым")
     private String name;
     @NotNull
@@ -29,8 +27,7 @@ public class Film {
     private LocalDate releaseDate;
     @Positive(message = "Продолжительность фильма должна быть положительной")
     private int duration;
-
-    public Set<Integer> getLikes() {
-        return likes;
-    }
+    @NotNull(message = "Должен быть указан рейтинг MPA")
+    private Mpa mpa;
+    private Set<Genre> genres = new HashSet<>();
 }
