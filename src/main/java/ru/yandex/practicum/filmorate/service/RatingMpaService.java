@@ -4,14 +4,11 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
-import ru.yandex.practicum.filmorate.exception.ErrorGenreException;
 import ru.yandex.practicum.filmorate.exception.ErrorRatingMpaException;
 import ru.yandex.practicum.filmorate.model.Mpa;
 import ru.yandex.practicum.filmorate.storage.dao.ratingMpa.RatingMpaDao;
 
-import java.util.LinkedList;
 import java.util.List;
-import java.util.Set;
 
 @Slf4j
 @Service
