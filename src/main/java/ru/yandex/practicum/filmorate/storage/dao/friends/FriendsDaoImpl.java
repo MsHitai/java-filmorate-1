@@ -61,7 +61,7 @@ public class FriendsDaoImpl implements FriendsDao {
                     + "FROM friends "
                     + "WHERE user_id=%d "
                     + "AND friend_id=%d", userId, friendId), new FriendsMapper());
-        } catch (EmptyResultDataAccessException e) {
+        } catch (EmptyResultDataAccessException exception) {
             return null;
         }
     }

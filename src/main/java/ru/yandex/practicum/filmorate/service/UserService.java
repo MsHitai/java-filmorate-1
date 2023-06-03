@@ -77,7 +77,7 @@ public class UserService {
     private void contains(long userId) {
         try {
             userStorage.findById(userId);
-        } catch (EmptyResultDataAccessException e) {
+        } catch (EmptyResultDataAccessException exception) {
             log.debug("Пользователь с id {} не найден", userId);
             throw new ErrorUserException("Пользователь не найден");
         }

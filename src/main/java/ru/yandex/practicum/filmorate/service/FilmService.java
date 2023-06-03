@@ -39,19 +39,20 @@ public class FilmService {
         List<Film> result = filmStorage.findAll().stream()
                 .sorted(this::likeCompare)
                 .limit(count).collect(Collectors.toCollection(LinkedList::new));
-        for (Film film : result) {
+
+        result.forEach(film -> {
             film.setGenres(filmStorage.findGenres(film.getId()));
             film.setMpa(ratingMpa.findById(film.getMpa().getId()));
-        }
+        });
         return result;
     }
 
     public List<Film> findAll() {
         List<Film> films = filmStorage.findAll();
-        for (Film film : films) {
+        films.forEach(film -> {
             film.setGenres(filmStorage.findGenres(film.getId()));
             film.setMpa(ratingMpa.findById(film.getMpa().getId()));
-        }
+        });
         return films;
     }
 
@@ -85,7 +86,7 @@ public class FilmService {
     private Film contains(long filmId) {
         try {
            return filmStorage.findById(filmId);
-        } catch (EmptyResultDataAccessException e) {
+        } catch (EmptyResultDataAccessException exception) {
             log.debug("Фильм с id {} не найден", filmId);
             throw new ErrorFilmException("Фильм не найден");
         }

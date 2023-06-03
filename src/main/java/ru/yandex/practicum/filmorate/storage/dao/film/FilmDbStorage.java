@@ -66,11 +66,11 @@ public class FilmDbStorage implements FilmStorage {
 
     @Override
     public void addGenres(long filmId, Set<Genre> genres) {
-        for (Genre genre : genres) {
+        genres.forEach(genre -> {
             jdbcTemplate.update("INSERT INTO film_genres (film_id, genre_id) VALUES (?, ?)",
                     filmId, genre.getId());
             log.debug("Фильму {} добавлен жанр {}", filmId, genre.getId());
-        }
+        });
     }
 
     @Override

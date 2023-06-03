@@ -20,21 +20,21 @@ import static org.junit.jupiter.api.Assertions.*;
 @RequiredArgsConstructor(onConstructor_ = @Autowired)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 class FilmDbStorageTest {
-    @Autowired
     private final FilmDbStorage filmDbStorage;
-    private final Film film = new Film();
+    private Film film;
     private final Mpa mpa = new Mpa();
 
     @BeforeEach
     public void beforeEach() {
         mpa.setId(1);
-
-        film.setId(1);
-        film.setName("name");
-        film.setDescription("description");
-        film.setReleaseDate(LocalDate.of(2000, 1, 11));
-        film.setDuration(60);
-        film.setMpa(mpa);
+        film = Film.builder()
+                .id(1)
+                .name("name")
+                .description("description")
+                .releaseDate(LocalDate.of(2000, 1, 11))
+                .duration(60)
+                .mpa(mpa)
+                .build();
     }
 
     @Test

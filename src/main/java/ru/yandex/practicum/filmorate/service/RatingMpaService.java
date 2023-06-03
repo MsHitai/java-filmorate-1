@@ -28,7 +28,7 @@ public class RatingMpaService {
     private void contains(int ratingId) {
         try {
             ratingMpaDao.findById(ratingId);
-        } catch (EmptyResultDataAccessException e) {
+        } catch (EmptyResultDataAccessException exception) {
             log.debug("Рейтинг MPA с id {} не найден", ratingId);
             throw new ErrorRatingMpaException("Рейтинг MPA не найден");
         }

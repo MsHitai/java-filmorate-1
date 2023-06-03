@@ -9,9 +9,9 @@ import java.sql.SQLException;
 public class LikeMapper implements RowMapper<Like> {
     @Override
     public Like mapRow(ResultSet rs, int rowNum) throws SQLException {
-        Like like = new Like();
-        like.setFilmID(rs.getLong("film_id"));
-        like.setUserID(rs.getLong("user_id"));
-        return like;
+        return Like.builder()
+                .filmId(rs.getLong("film_id"))
+                .userId(rs.getLong("user_id"))
+                .build();
     }
 }

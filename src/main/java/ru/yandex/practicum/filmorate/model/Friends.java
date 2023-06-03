@@ -1,10 +1,12 @@
 package ru.yandex.practicum.filmorate.model;
 
-import lombok.Data;
+import lombok.Builder;
+import lombok.Getter;
 
 import javax.validation.constraints.NotNull;
 
-@Data
+@Getter
+@Builder
 public class Friends {
     @NotNull
     private long userId;

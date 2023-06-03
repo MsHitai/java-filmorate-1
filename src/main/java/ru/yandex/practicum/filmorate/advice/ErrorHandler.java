@@ -11,57 +11,57 @@ import ru.yandex.practicum.filmorate.exception.*;
 import javax.validation.ConstraintViolationException;
 
 @Slf4j
-@RestControllerAdvice(basePackages = "ru.yandex.practicum.filmorate.controller")
+@RestControllerAdvice
 public class ErrorHandler {
     @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ErrorResponse handleMethodArgumentNotValidException(final MethodArgumentNotValidException e) {
-        log.debug("Получен статус 400 Bad Request {}", e.getMessage(), e);
+    public ErrorResponse handleMethodArgumentNotValidException(final MethodArgumentNotValidException exception) {
+        log.debug("Получен статус 400 Bad Request {}", exception.getMessage(), exception);
         return new ErrorResponse(
-                e.getMessage()
+                exception.getMessage()
         );
     }
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    public ErrorResponse handleUserNotFoundException(final ErrorUserException e) {
-        log.debug("Получен статус 404 Not found {}", e.getMessage(), e);
+    public ErrorResponse handleUserNotFoundException(final ErrorUserException exception) {
+        log.debug("Получен статус 404 Not found {}", exception.getMessage(), exception);
         return new ErrorResponse(
-                e.getMessage()
+                exception.getMessage()
         );
     }
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    public ErrorResponse handleFilmNotFoundException(final ErrorFilmException e) {
-        log.debug("Получен статус 404 Not found {}", e.getMessage(), e);
+    public ErrorResponse handleFilmNotFoundException(final ErrorFilmException exception) {
+        log.debug("Получен статус 404 Not found {}", exception.getMessage(), exception);
         return new ErrorResponse(
-                e.getMessage()
+                exception.getMessage()
         );
     }
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ErrorResponse handleLoginAlreadyExistException(final LoginAlreadyExistException e) {
-        log.debug("Получен статус 400 Bad Request {}", e.getMessage(), e);
+    public ErrorResponse handleLoginAlreadyExistException(final LoginAlreadyExistException exception) {
+        log.debug("Получен статус 400 Bad Request {}", exception.getMessage(), exception);
         return new ErrorResponse(
-                e.getMessage()
+                exception.getMessage()
         );
     }
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ErrorResponse handleFilmAlreadyExistException(final FilmAlreadyExistException e) {
-        log.debug("Получен статус 400 Bad Request {}", e.getMessage(), e);
+    public ErrorResponse handleFilmAlreadyExistException(final FilmAlreadyExistException exception) {
+        log.debug("Получен статус 400 Bad Request {}", exception.getMessage(), exception);
         return new ErrorResponse(
-                e.getMessage()
+                exception.getMessage()
         );
     }
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    public ErrorResponse handleThrowable(final Throwable e) {
-        log.debug("Получен статус 500 Internal Server Error {}", e.getMessage(), e);
+    public ErrorResponse handleThrowable(final Throwable exception) {
+        log.debug("Получен статус 500 Internal Server Error {}", exception.getMessage(), exception);
         return new ErrorResponse(
                 "Произошла непредвиденная ошибка."
         );
@@ -69,28 +69,28 @@ public class ErrorHandler {
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ErrorResponse handleConstraintViolationException(final ConstraintViolationException e) {
-        log.debug("Получен статус 400 Bad Request {}", e.getMessage(), e);
+    public ErrorResponse handleConstraintViolationException(final ConstraintViolationException exception) {
+        log.debug("Получен статус 400 Bad Request {}", exception.getMessage(), exception);
         return new ErrorResponse(
-                e.getMessage()
+                exception.getMessage()
         );
     }
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    public ErrorResponse handleGenreNotFoundException(final ErrorGenreException e) {
-        log.debug("Получен статус 404 Not found {}", e.getMessage(), e);
+    public ErrorResponse handleGenreNotFoundException(final ErrorGenreException exception) {
+        log.debug("Получен статус 404 Not found {}", exception.getMessage(), exception);
         return new ErrorResponse(
-                e.getMessage()
+                exception.getMessage()
         );
     }
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    public ErrorResponse handleRatingMpaNotFoundException(final ErrorRatingMpaException e) {
-        log.debug("Получен статус 404 Not found {}", e.getMessage(), e);
+    public ErrorResponse handleRatingMpaNotFoundException(final ErrorRatingMpaException exception) {
+        log.debug("Получен статус 404 Not found {}", exception.getMessage(), exception);
         return new ErrorResponse(
-                e.getMessage()
+                exception.getMessage()
         );
     }
 }

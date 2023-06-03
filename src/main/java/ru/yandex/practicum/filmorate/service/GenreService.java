@@ -28,7 +28,7 @@ public class GenreService {
     private void contains(int genreId) {
         try {
             genreDao.findById(genreId);
-        } catch (EmptyResultDataAccessException e) {
+        } catch (EmptyResultDataAccessException exception) {
             log.debug("Жанр с id {} не найден", genreId);
             throw new ErrorGenreException("Жанр не найден");
         }
