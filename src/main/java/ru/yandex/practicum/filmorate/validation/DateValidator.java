@@ -1,6 +1,6 @@
-package ru.yandex.practicum.filmorate.validator;
+package ru.yandex.practicum.filmorate.validation;
 
-import ru.yandex.practicum.filmorate.validator.interfaces.ValidDate;
+import ru.yandex.practicum.filmorate.validation.interfaces.ValidDate;
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 import java.time.LocalDate;
