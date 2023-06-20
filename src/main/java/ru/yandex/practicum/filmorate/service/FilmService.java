@@ -117,4 +117,9 @@ public class FilmService {
             throw new ErrorFilmException("Фильм не найден");
         }
     }
+
+    public void deleteFilm(long id) {
+        contains(id);
+        filmStorage.delete(id);
+    }
 }

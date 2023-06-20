@@ -52,6 +52,11 @@ public class FilmController {
         return filmService.getTopPopularFilms(count);
     }
 
+    @DeleteMapping("/{id}")
+    public void deleteFilm(@PathVariable long id) {
+        filmService.deleteFilm(id);
+    }
+
     @GetMapping("/common")
     public List<Film> getCommonPopularFilms(@RequestParam("userId") Long userId,
                                             @RequestParam("friendId") Long friendId) {

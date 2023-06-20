@@ -5,4 +5,5 @@ import ru.yandex.practicum.filmorate.storage.dao.Storage;
 
 public interface UserStorage extends Storage<User> {
 
+    void delete(long userId);
 }

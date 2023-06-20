@@ -12,4 +12,6 @@ public interface FilmStorage extends Storage<Film> {
     void updateGenres(long filmId, Set<Genre> genres);
 
     Set<Genre> findGenres(long filmId);
+
+    void delete(long filmId);
 }
