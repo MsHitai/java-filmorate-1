@@ -10,6 +10,7 @@ import ru.yandex.practicum.filmorate.storage.dao.film.FilmStorage;
 import ru.yandex.practicum.filmorate.storage.dao.like.LikeDao;
 import ru.yandex.practicum.filmorate.storage.dao.ratingMpa.RatingMpaDao;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -44,6 +45,31 @@ public class FilmService {
             film.setGenres(filmStorage.findGenres(film.getId()));
             film.setMpa(ratingMpa.findById(film.getMpa().getId()));
         });
+        return result;
+    }
+
+    public List<Film> getCommonPopularFilms(long userId, long friendId) {
+        userService.findById(userId);
+        userService.findById(friendId);
+
+        List<Long> filmIdsByUserId = likeDao.getFilmIdLikes(userId);
+        List<Long> filmIdsByFriendId = likeDao.getFilmIdLikes(friendId);
+
+        List<Film> result = new ArrayList<>();
+
+        for (Long filmId : filmIdsByFriendId) {
+            if (filmIdsByUserId.contains(filmId)) {
+                result.add(filmStorage.findById(filmId));
+            }
+        }
+
+        result.stream()
+                .sorted(this::likeCompare)
+                .forEach(film -> {
+                    film.setGenres(filmStorage.findGenres(film.getId()));
+                    film.setMpa(ratingMpa.findById(film.getMpa().getId()));
+                });
+
         return result;
     }
 
@@ -85,7 +111,7 @@ public class FilmService {
 
     private Film contains(long filmId) {
         try {
-           return filmStorage.findById(filmId);
+            return filmStorage.findById(filmId);
         } catch (EmptyResultDataAccessException exception) {
             log.debug("Фильм с id {} не найден", filmId);
             throw new ErrorFilmException("Фильм не найден");
