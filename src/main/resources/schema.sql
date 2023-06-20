@@ -29,7 +29,7 @@ CREATE TABLE IF NOT EXISTS genres
 
 CREATE TABLE IF NOT EXISTS film_genres
 (
-    film_id  BIGINT  NOT NULL REFERENCES films (film_id),
+    film_id  BIGINT  NOT NULL REFERENCES films (film_id) ON DELETE CASCADE,
     genre_id INTEGER NOT NULL REFERENCES genres (genre_id)
 );
 
@@ -44,14 +44,14 @@ CREATE TABLE IF NOT EXISTS users
 
 CREATE TABLE IF NOT EXISTS friends
 (
-    user_id BIGINT  NOT NULL REFERENCES users (user_id),
-    friend_id BIGINT  NOT NULL REFERENCES users (user_id),
+    user_id BIGINT  NOT NULL REFERENCES users (user_id) ON DELETE CASCADE,
+    friend_id BIGINT  NOT NULL REFERENCES users (user_id) ON DELETE CASCADE,
     is_mutual BOOLEAN NOT NULL,
     PRIMARY KEY (user_id, friend_id)
 );
 
 CREATE TABLE IF NOT EXISTS likes
 (
-    film_id BIGINT NOT NULL REFERENCES films (film_id),
-    user_id BIGINT NOT NULL REFERENCES users (user_id)
+    film_id BIGINT NOT NULL REFERENCES films (film_id) ON DELETE CASCADE,
+    user_id BIGINT NOT NULL REFERENCES users (user_id) ON DELETE CASCADE
 );

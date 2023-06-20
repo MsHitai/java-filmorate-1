@@ -82,4 +82,9 @@ public class UserService {
             throw new ErrorUserException("Пользователь не найден");
         }
     }
+
+    public void deleteUser(long id) {
+        contains(id);
+        userStorage.delete(id);
+    }
 }

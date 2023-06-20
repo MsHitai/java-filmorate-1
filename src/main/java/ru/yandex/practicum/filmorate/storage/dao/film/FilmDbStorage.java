@@ -90,6 +90,12 @@ public class FilmDbStorage implements FilmStorage {
                 + "ORDER BY g.genre_id", filmId), new GenreMapper()));
     }
 
+    @Override
+    public void delete(long filmId) {
+        log.debug("Удаляется фильм по id {}", filmId);
+        jdbcTemplate.update("DELETE FROM films WHERE film_id=?", filmId);
+    }
+
     private Film getFilm(Film film) {
         return jdbcTemplate.queryForObject(format("SELECT "
                         + "film_id, name, description, release_date, duration, rating_id "

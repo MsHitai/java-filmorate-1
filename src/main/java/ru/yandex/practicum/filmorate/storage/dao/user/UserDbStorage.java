@@ -58,4 +58,10 @@ public class UserDbStorage implements UserStorage {
         return jdbcTemplate.queryForObject(format("SELECT user_id, email, login, name, birthday FROM users "
                 + "WHERE email='%s'", user.getEmail()), new UserMapper());
     }
+
+    @Override
+    public void delete(long userId) {
+        log.debug("Удаляется пользователь по id {}", userId);
+        jdbcTemplate.update("DELETE FROM users WHERE user_id=?", userId);
+    }
 }
