@@ -70,3 +70,17 @@ CREATE TABLE IF NOT EXISTS films_directors
     director_id BIGINT NOT NULL REFERENCES directors (director_id),
     PRIMARY KEY (film_id, director_id)
 );
+
+CREATE TABLE IF NOT EXISTS public.directors (
+	director_id BIGINT NOT NULL AUTO_INCREMENT,
+	name CHARACTER VARYING NOT NULL,
+	CONSTRAINT directors_pk PRIMARY KEY (director_id)
+);
+
+CREATE TABLE IF NOT EXISTS public.films_directors (
+	film_id BIGINT NOT NULL,
+	director_id BIGINT,
+	CONSTRAINT films_director_pk PRIMARY KEY (film_id,director_id),
+	CONSTRAINT films_director_fk FOREIGN KEY (film_id) REFERENCES films(film_id) ON DELETE CASCADE ON UPDATE CASCADE,
+	CONSTRAINT films_director_fk_1 FOREIGN KEY (director_id) REFERENCES directors(director_id) ON DELETE CASCADE ON UPDATE CASCADE
+);
