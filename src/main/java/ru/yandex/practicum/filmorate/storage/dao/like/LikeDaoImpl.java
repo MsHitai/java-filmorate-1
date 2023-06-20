@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Objects;
 
 import static java.lang.String.format;
@@ -32,5 +33,11 @@ public class LikeDaoImpl implements LikeDao {
         return Objects.requireNonNull(
                 jdbcTemplate.queryForObject(format("SELECT COUNT(*) FROM likes WHERE film_id=%d",
                         filmId), Integer.class));
+    }
+
+    @Override
+    public List<Long> getFilmIdLikes(long userId) {
+        String sql = "SELECT film_id FROM likes WHERE user_id = ?";
+        return jdbcTemplate.queryForList(sql, Long.class, userId);
     }
 }
