@@ -31,6 +31,7 @@ public class Film {
     @NotNull(message = "Должен быть указан рейтинг MPA")
     private Mpa mpa;
     private Set<Genre> genres = new HashSet<>();
+    private Set<Director> directors = new HashSet<>();
 
     @Builder
     public Film(long id, String name, String description, LocalDate releaseDate, int duration, Mpa mpa) {
