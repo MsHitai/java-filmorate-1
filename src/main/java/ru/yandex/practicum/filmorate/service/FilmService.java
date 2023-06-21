@@ -18,6 +18,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static ru.yandex.practicum.filmorate.service.EventsService.*;
+
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -28,20 +30,23 @@ public class FilmService {
     private final UserService userService;
     private final GenreService genreService;
     private final DirectorStorage directorStorage;
+    private final EventsService eventsService;
 
     public void addNewLike(long filmId, long userId) {
         contains(filmId);
         userService.findById(userId);
         likeDao.add(filmId, userId);
+        eventsService.addEvent(userId, filmId, LIKE_TYPE, ADD_OPERATION);
     }
 
     public void removeLike(long filmId, long userId) {
         contains(filmId);
         userService.findById(userId);
         likeDao.delete(filmId, userId);
+        eventsService.addEvent(userId, filmId, LIKE_TYPE, REMOVE_OPERATION);
     }
 
-    public List<Film> getTopPopularFilms(int count, Integer genreId, Integer year) {
+    public List<Film> getTopPopularFilms(int count) {
         List<Film> result = filmStorage.findAll().stream()
                 .sorted(this::likeCompare)
                 .limit(count).collect(Collectors.toCollection(LinkedList::new));
@@ -80,7 +85,6 @@ public class FilmService {
 
         List<Long> filmIdsByUserId = likeDao.getFilmIdLikes(userId);
         List<Long> filmIdsByFriendId = likeDao.getFilmIdLikes(friendId);
-
         List<Film> result = new ArrayList<>();
 
         for (Long filmId : filmIdsByFriendId) {
