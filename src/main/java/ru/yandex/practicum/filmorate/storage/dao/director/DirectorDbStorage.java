@@ -15,9 +15,10 @@ import java.util.List;
 
 @Component
 @RequiredArgsConstructor
-public class DirectorDbStorage implements DirectorStorage{
+public class DirectorDbStorage implements DirectorStorage {
 
     private final JdbcTemplate jdbcTemplate;
+
     @Override
     public List<Director> findAll() {
         String sqlQuery = "SELECT * FROM directors";

@@ -124,7 +124,7 @@ public class FilmService {
 
     private Film contains(long filmId) {
         try {
-           return filmStorage.findById(filmId);
+            return filmStorage.findById(filmId);
         } catch (EmptyResultDataAccessException exception) {
             log.debug("Фильм с id {} не найден", filmId);
             throw new ErrorFilmException("Фильм не найден");
