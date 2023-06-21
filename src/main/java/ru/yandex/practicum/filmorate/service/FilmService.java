@@ -4,13 +4,16 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
+import ru.yandex.practicum.filmorate.exception.ErrorDirectorException;
 import ru.yandex.practicum.filmorate.exception.ErrorFilmException;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.storage.dao.director.DirectorStorage;
 import ru.yandex.practicum.filmorate.storage.dao.film.FilmStorage;
 import ru.yandex.practicum.filmorate.storage.dao.like.LikeDao;
 import ru.yandex.practicum.filmorate.storage.dao.ratingMpa.RatingMpaDao;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -23,6 +26,8 @@ public class FilmService {
     private final RatingMpaDao ratingMpa;
     private final LikeDao likeDao;
     private final UserService userService;
+    private final GenreService genreService;
+    private final DirectorStorage directorStorage;
 
     public void addNewLike(long filmId, long userId) {
         contains(filmId);
@@ -36,7 +41,7 @@ public class FilmService {
         likeDao.delete(filmId, userId);
     }
 
-    public List<Film> getTopPopularFilms(int count) {
+    public List<Film> getTopPopularFilms(int count, Integer genreId, Integer year) {
         List<Film> result = filmStorage.findAll().stream()
                 .sorted(this::likeCompare)
                 .limit(count).collect(Collectors.toCollection(LinkedList::new));
@@ -44,8 +49,29 @@ public class FilmService {
         result.forEach(film -> {
             film.setGenres(filmStorage.findGenres(film.getId()));
             film.setMpa(ratingMpa.findById(film.getMpa().getId()));
+            film.setDirectors(filmStorage.findDirectors(film.getId()));
         });
-        return result;
+
+        if (genreId == null && year == null) {
+            return result;
+        } else if (genreId != null && year == null) {
+            genreService.findById(genreId);
+            List<Film> sortedByGenre = new ArrayList<>();
+            result.forEach(film -> film.getGenres().stream()
+                    .filter(genre -> genre.getId() == genreId).map(genre -> film)
+                    .forEach(sortedByGenre::add));
+            return sortedByGenre;
+        } else if (genreId == null && year != null) {
+            return result.stream()
+                    .filter(film -> film.getReleaseDate().getYear() == year)
+                    .collect(Collectors.toList());
+        } else {
+            List<Film> sortedByBoth = new ArrayList<>();
+            result.forEach(film -> film.getGenres().stream()
+                    .filter(genre -> genre.getId() == genreId && film.getReleaseDate().getYear() == year)
+                    .map(genre -> film).forEach(sortedByBoth::add));
+            return sortedByBoth;
+        }
     }
 
     public List<Film> getCommonPopularFilms(long userId, long friendId) {
@@ -78,6 +104,7 @@ public class FilmService {
         films.forEach(film -> {
             film.setGenres(filmStorage.findGenres(film.getId()));
             film.setMpa(ratingMpa.findById(film.getMpa().getId()));
+            film.setDirectors(filmStorage.findDirectors(film.getId()));
         });
         return films;
     }
@@ -86,6 +113,8 @@ public class FilmService {
         Film result = filmStorage.create(film);
         filmStorage.addGenres(result.getId(), film.getGenres());
         result.setGenres(filmStorage.findGenres(result.getId()));
+        filmStorage.addDirectors(result.getId(), film.getDirectors());
+        result.setDirectors(filmStorage.findDirectors(result.getId()));
         return result;
     }
 
@@ -95,6 +124,8 @@ public class FilmService {
         filmStorage.updateGenres(result.getId(), film.getGenres());
         result.setGenres(filmStorage.findGenres(result.getId()));
         result.setMpa(ratingMpa.findById(result.getMpa().getId()));
+        filmStorage.updateDirectors(result.getId(), film.getDirectors());
+        result.setDirectors(filmStorage.findDirectors(result.getId()));
         return result;
     }
 
@@ -102,7 +133,35 @@ public class FilmService {
         Film result = contains(filmId);
         result.setGenres(filmStorage.findGenres(filmId));
         result.setMpa(ratingMpa.findById(result.getMpa().getId()));
+        result.setDirectors(filmStorage.findDirectors(filmId));
         return result;
+    }
+
+    public List<Film> getSortedDirectorFilms(long dirId, String sortBy) {
+        if (directorStorage.findById(dirId) == null) {
+            throw new ErrorDirectorException("Режиссёр не найден");
+        }
+        List<Film> directorFilms = new ArrayList<>();
+        if (sortBy.equals("year")) {
+            directorFilms = filmStorage.getAllDirectorFilms(dirId).stream()
+                    .sorted(Comparator.comparing(Film::getReleaseDate))
+                    .collect(Collectors.toList());
+            directorFilms.forEach(film -> {
+                film.setMpa(ratingMpa.findById(film.getMpa().getId()));
+                film.setDirectors(filmStorage.findDirectors(film.getId()));
+                film.setGenres(filmStorage.findGenres(film.getId()));
+            });
+        } else if (sortBy.equals("likes")) {
+            directorFilms = filmStorage.getAllDirectorFilms(dirId).stream()
+                    .sorted(this::likeCompare)
+                    .collect(Collectors.toList());
+            directorFilms.forEach(film -> {
+                film.setMpa(ratingMpa.findById(film.getMpa().getId()));
+                film.setDirectors(filmStorage.findDirectors(film.getId()));
+                film.setGenres(filmStorage.findGenres(film.getId()));
+            });
+        }
+        return directorFilms;
     }
 
     private int likeCompare(Film film, Film otherFilm) {
@@ -116,5 +175,10 @@ public class FilmService {
             log.debug("Фильм с id {} не найден", filmId);
             throw new ErrorFilmException("Фильм не найден");
         }
+    }
+
+    public void deleteFilm(long id) {
+        contains(id);
+        filmStorage.delete(id);
     }
 }

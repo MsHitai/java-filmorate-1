@@ -13,7 +13,8 @@ import ru.yandex.practicum.filmorate.storage.dao.like.LikeDao;
 import ru.yandex.practicum.filmorate.storage.dao.ratingMpa.RatingMpaDao;
 import ru.yandex.practicum.filmorate.storage.dao.user.UserStorage;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -88,6 +89,11 @@ public class UserService {
             log.debug("Пользователь с id {} не найден", userId);
             throw new ErrorUserException("Пользователь не найден");
         }
+    }
+
+    public void deleteUser(long id) {
+        contains(id);
+        userStorage.delete(id);
     }
 
     private List<Long> getLikedFilmsForUser(long id) {
