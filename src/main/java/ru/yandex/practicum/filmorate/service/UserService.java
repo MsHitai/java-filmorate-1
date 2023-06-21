@@ -5,12 +5,15 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exception.ErrorUserException;
+import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.storage.dao.film.FilmStorage;
 import ru.yandex.practicum.filmorate.storage.dao.friends.FriendsDao;
+import ru.yandex.practicum.filmorate.storage.dao.like.LikeDao;
+import ru.yandex.practicum.filmorate.storage.dao.ratingMpa.RatingMpaDao;
 import ru.yandex.practicum.filmorate.storage.dao.user.UserStorage;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -19,6 +22,10 @@ import java.util.stream.Collectors;
 public class UserService {
     private final UserStorage userStorage;
     private final FriendsDao friendsDao;
+    private final LikeDao likeDao;
+    private final FilmStorage filmStorage;
+
+    private final RatingMpaDao ratingMpaDao;
 
     public void addNewFriend(Long id, Long friendId) {
         contains(id);
@@ -81,5 +88,48 @@ public class UserService {
             log.debug("Пользователь с id {} не найден", userId);
             throw new ErrorUserException("Пользователь не найден");
         }
+    }
+
+    private List<Long> getLikedFilmsForUser(long id) {
+        return likeDao.getFilmIdLikes(id);
+    }
+
+    private Integer getIntersection(long userId, long anotherUserId) {
+        List<Long> intersection = new ArrayList<>();
+        for (long id : getLikedFilmsForUser(anotherUserId)) {
+            if (getLikedFilmsForUser(userId).contains(id)) {
+                intersection.add(id);
+            }
+        }
+        return intersection.size();
+    }
+
+    private List<Long> getIntersectionList(long userId) {
+        List<Long> users = new ArrayList<>();
+        for (User user : userStorage.findAll()) {
+            if (user.getId() != userId) {
+                users.add(user.getId());
+            }
+        }
+        return users.stream().sorted((id1, id2) -> getIntersection(userId, id1) - getIntersection(userId, id2))
+                .collect(Collectors.toList());
+    }
+
+    public List<Film> getRecommendFilms(long userId) {
+        List<Long> users = getIntersectionList(userId);
+        List<Long> userIdFilms = getLikedFilmsForUser(userId);
+        List<Film> films = new ArrayList<>();
+        for (long id : users) {
+            for (long filmId : getLikedFilmsForUser(id)) {
+                if (!userIdFilms.contains(filmId)) {
+                    userIdFilms.add(filmId);
+                    Film film = filmStorage.findById(filmId);
+                    film.setGenres(filmStorage.findGenres(filmId));
+                    film.setMpa(ratingMpaDao.findById(film.getMpa().getId()));
+                    films.add(film);
+                }
+            }
+        }
+        return films;
     }
 }
