@@ -4,8 +4,10 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
+import ru.yandex.practicum.filmorate.model.Director;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Genre;
+import ru.yandex.practicum.filmorate.storage.mapper.DirectorMapper;
 import ru.yandex.practicum.filmorate.storage.mapper.FilmMapper;
 import ru.yandex.practicum.filmorate.storage.mapper.GenreMapper;
 
@@ -94,6 +96,39 @@ public class FilmDbStorage implements FilmStorage {
     public void delete(long filmId) {
         log.debug("Удаляется фильм по id {}", filmId);
         jdbcTemplate.update("DELETE FROM films WHERE film_id=?", filmId);
+    }
+
+    @Override
+    public void addDirectors(long filmId, Set<Director> directors) {
+        directors.forEach(director -> {
+            jdbcTemplate.update("INSERT INTO films_directors (film_id, director_id) VALUES (?, ?)",
+                    filmId, director.getId());
+            log.debug("Фильму {} добавлен режиссёр {}", filmId, director.getId());
+        });
+    }
+
+    @Override
+    public void updateDirectors(long filmId, Set<Director> directors) {
+        jdbcTemplate.update("DELETE FROM films_directors WHERE film_id = ?", filmId);
+        addDirectors(filmId, directors);
+        log.debug("Обновлены режиссёры для фильма {}", filmId);
+    }
+
+    @Override
+    public Set<Director> findDirectors(long filmId) {
+        log.debug("Все режиссеры фильма {}", filmId);
+        return new HashSet<>(jdbcTemplate.query(format("SELECT fd.director_id, d.name " +
+                "FROM films_directors AS fd " +
+                "LEFT OUTER JOIN directors AS d ON fd.director_id = d.director_id " +
+                "WHERE fd.film_id = %d", filmId), new DirectorMapper()));
+    }
+
+    @Override
+    public List<Film> getAllDirectorFilms(long dirId) {
+        String sqlQuery = "SELECT * FROM films AS f " +
+                "INNER JOIN films_directors AS fd ON f.film_id = fd.film_id " +
+                "WHERE fd.director_id = ?";
+        return jdbcTemplate.query(sqlQuery, new FilmMapper(), dirId);
     }
 
     private Film getFilm(Film film) {
