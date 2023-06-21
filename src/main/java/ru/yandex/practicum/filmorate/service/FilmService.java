@@ -26,6 +26,7 @@ public class FilmService {
     private final RatingMpaDao ratingMpa;
     private final LikeDao likeDao;
     private final UserService userService;
+    private final GenreService genreService;
     private final DirectorStorage directorStorage;
 
     public void addNewLike(long filmId, long userId) {
@@ -40,7 +41,7 @@ public class FilmService {
         likeDao.delete(filmId, userId);
     }
 
-    public List<Film> getTopPopularFilms(int count) {
+    public List<Film> getTopPopularFilms(int count, Integer genreId, Integer year) {
         List<Film> result = filmStorage.findAll().stream()
                 .sorted(this::likeCompare)
                 .limit(count).collect(Collectors.toCollection(LinkedList::new));
@@ -50,7 +51,27 @@ public class FilmService {
             film.setMpa(ratingMpa.findById(film.getMpa().getId()));
             film.setDirectors(filmStorage.findDirectors(film.getId()));
         });
-        return result;
+
+        if (genreId == null && year == null) {
+            return result;
+        } else if (genreId != null && year == null) {
+            genreService.findById(genreId);
+            List<Film> sortedByGenre = new ArrayList<>();
+            result.forEach(film -> film.getGenres().stream()
+                    .filter(genre -> genre.getId() == genreId).map(genre -> film)
+                    .forEach(sortedByGenre::add));
+            return sortedByGenre;
+        } else if (genreId == null && year != null) {
+            return result.stream()
+                    .filter(film -> film.getReleaseDate().getYear() == year)
+                    .collect(Collectors.toList());
+        } else {
+            List<Film> sortedByBoth = new ArrayList<>();
+            result.forEach(film -> film.getGenres().stream()
+                    .filter(genre -> genre.getId() == genreId && film.getReleaseDate().getYear() == year)
+                    .map(genre -> film).forEach(sortedByBoth::add));
+            return sortedByBoth;
+        }
     }
 
     public List<Film> getCommonPopularFilms(long userId, long friendId) {

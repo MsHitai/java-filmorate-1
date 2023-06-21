@@ -95,7 +95,6 @@ public class UserService {
         contains(id);
         userStorage.delete(id);
     }
-}
 
     private List<Long> getLikedFilmsForUser(long id) {
         return likeDao.getFilmIdLikes(id);
