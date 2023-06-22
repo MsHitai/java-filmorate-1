@@ -93,4 +93,13 @@ public class ErrorHandler {
                 exception.getMessage()
         );
     }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ErrorResponse handleReviewNotFoundException(final ErrorReviewException exception) {
+        log.debug("Получен статус 404 Not found {}", exception.getMessage(), exception);
+        return new ErrorResponse(
+                exception.getMessage()
+        );
+    }
 }
