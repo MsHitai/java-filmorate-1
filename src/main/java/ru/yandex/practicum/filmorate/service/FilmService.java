@@ -61,7 +61,7 @@ public class FilmService {
                     .filter(genre -> genre.getId() == genreId).map(genre -> film)
                     .forEach(sortedByGenre::add));
             return sortedByGenre;
-        } else if (genreId == null && year != null) {
+        } else if (genreId == null) {
             return result.stream()
                     .filter(film -> film.getReleaseDate().getYear() == year)
                     .collect(Collectors.toList());
