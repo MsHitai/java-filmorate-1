@@ -3,9 +3,7 @@ package ru.yandex.practicum.filmorate.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.model.Review;
-import ru.yandex.practicum.filmorate.storage.dao.film.FilmStorage;
 import ru.yandex.practicum.filmorate.storage.dao.review.ReviewStorage;
-import ru.yandex.practicum.filmorate.storage.dao.user.UserStorage;
 
 import java.util.Comparator;
 import java.util.List;
@@ -16,12 +14,12 @@ import java.util.stream.Collectors;
 public class ReviewService {
 
     private final ReviewStorage reviewStorage;
-    private final UserStorage userStorage;
-    private final FilmStorage filmStorage;
+    private final UserService userService;
+    private final FilmService filmService;
 
     public Review add(Review review) {
-        userStorage.findById(review.getUserId());
-        filmStorage.findById(review.getFilmId());
+        userService.findById(review.getUserId());
+        filmService.findById(review.getFilmId());
         return reviewStorage.add(review);
     }
 
@@ -51,7 +49,7 @@ public class ReviewService {
     }
 
     public boolean addLike(Long id, Long userId) {
-        userStorage.findById(userId);
+        userService.findById(userId);
         return reviewStorage.addLike(id, userId);
     }
 
