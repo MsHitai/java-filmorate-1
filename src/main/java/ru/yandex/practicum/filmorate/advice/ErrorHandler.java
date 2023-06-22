@@ -96,7 +96,7 @@ public class ErrorHandler {
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    public ErrorResponse handleDirectorNotFoundException(final ErrorDirectorException exception) {
+    public ErrorResponse handleReviewNotFoundException(final ErrorReviewException exception) {
         log.debug("Получен статус 404 Not found {}", exception.getMessage(), exception);
         return new ErrorResponse(
                 exception.getMessage()
@@ -105,7 +105,7 @@ public class ErrorHandler {
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    public ErrorResponse handleReviewNotFoundException(final ErrorReviewException exception) {
+    public ErrorResponse handleDirectorNotFoundException(final ErrorDirectorException exception) {
         log.debug("Получен статус 404 Not found {}", exception.getMessage(), exception);
         return new ErrorResponse(
                 exception.getMessage()
