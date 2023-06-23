@@ -32,7 +32,7 @@ public class UserService {
     private final EventsService eventsService;
     private final RatingMpaDao ratingMpaDao;
 
-    public void addNewFriend(Long id, Long friendId) {
+    public void addNewFriend(long id, long friendId) {
         contains(id);
         contains(friendId);
         boolean isMutual = friendsDao.get(friendId, id) != null;
@@ -40,12 +40,12 @@ public class UserService {
         eventsService.addEvent(id, friendId, FRIEND_TYPE, ADD_OPERATION);
     }
 
-    public void removeFriend(Long id, Long friendId) {
+    public void removeFriend(long id, long friendId) {
         friendsDao.delete(id, friendId);
         eventsService.addEvent(id, friendId, FRIEND_TYPE, REMOVE_OPERATION);
     }
 
-    public List<User> getFriends(Long id) {
+    public List<User> getFriends(long id) {
         contains(id);
         return friendsDao.getFriends(id).stream()
                 .mapToLong(Long::valueOf)
@@ -53,7 +53,7 @@ public class UserService {
                 .collect(Collectors.toList());
     }
 
-    public List<User> getMutualFriends(Long id, Long otherId) {
+    public List<User> getMutualFriends(long id, long otherId) {
         contains(id);
         contains(otherId);
         List<User> friendsOfOtherId = new ArrayList<>(getFriends(otherId));
@@ -104,6 +104,11 @@ public class UserService {
         return films;
     }
 
+    public void deleteUser(long id) {
+        contains(id);
+        userStorage.delete(id);
+    }
+
     private void makeNameALoginIfNameIsEmpty(User user) {
         if (user.getName() == null || user.getName().isBlank()) {
             user.setName(user.getLogin());
@@ -117,11 +122,6 @@ public class UserService {
             log.debug("Пользователь с id {} не найден", userId);
             throw new ErrorUserException("Пользователь не найден");
         }
-    }
-
-    public void deleteUser(long id) {
-        contains(id);
-        userStorage.delete(id);
     }
 
     private List<Long> getLikedFilmsForUser(long id) {

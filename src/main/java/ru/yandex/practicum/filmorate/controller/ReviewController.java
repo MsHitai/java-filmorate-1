@@ -17,18 +17,18 @@ public class ReviewController {
 
     @PostMapping
     public Review add(@Valid @RequestBody Review review) {
-        return reviewService.add(review);
+        return reviewService.create(review);
     }
 
     @GetMapping("/{id}")
     public Review get(@PathVariable long id) {
-        return reviewService.get(id);
+        return reviewService.findById(id);
     }
 
     @GetMapping
     public List<Review> getReviews(@RequestParam(required = false) Long filmId,
                                    @RequestParam(defaultValue = "10") long count) {
-        return reviewService.getReviews(filmId, count);
+        return reviewService.findAll(filmId, count);
     }
 
     @PutMapping

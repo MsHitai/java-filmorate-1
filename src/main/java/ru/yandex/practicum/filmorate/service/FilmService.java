@@ -46,7 +46,7 @@ public class FilmService {
         eventsService.addEvent(userId, filmId, LIKE_TYPE, REMOVE_OPERATION);
     }
 
-    public List<Film> getTopPopularFilms(int count) {
+    public List<Film> getTopPopularFilms(int count, Integer genreId, Integer year) {
         List<Film> result = filmStorage.findAll().stream()
                 .sorted(this::likeCompare)
                 .limit(count).collect(Collectors.toCollection(LinkedList::new));
@@ -168,6 +168,11 @@ public class FilmService {
         return directorFilms;
     }
 
+    public void deleteFilm(long id) {
+        contains(id);
+        filmStorage.delete(id);
+    }
+
     private int likeCompare(Film film, Film otherFilm) {
         return Integer.compare(likeDao.check(otherFilm.getId()), likeDao.check(film.getId()));
     }
@@ -179,10 +184,5 @@ public class FilmService {
             log.debug("Фильм с id {} не найден", filmId);
             throw new ErrorFilmException("Фильм не найден");
         }
-    }
-
-    public void deleteFilm(long id) {
-        contains(id);
-        filmStorage.delete(id);
     }
 }
