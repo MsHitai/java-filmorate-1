@@ -23,7 +23,7 @@ public class FilmController {
 
     @PostMapping
     public Film create(@Valid @RequestBody Film film) {
-        return filmService.create(film);
+            return filmService.create(film);
     }
 
     @PutMapping
@@ -69,4 +69,10 @@ public class FilmController {
                                              @RequestParam(defaultValue = "year") @NotBlank String sortBy) {
         return filmService.getSortedDirectorFilms(id, sortBy);
     }
+
+    @GetMapping("/search")
+    public List<Film> getSearch(@RequestParam String query, @RequestParam List<String> by) {
+        return filmService.search(query, by);
+    }
+
 }

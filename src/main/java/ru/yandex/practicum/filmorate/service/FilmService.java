@@ -12,6 +12,7 @@ import ru.yandex.practicum.filmorate.storage.dao.film.FilmStorage;
 import ru.yandex.practicum.filmorate.storage.dao.like.LikeDao;
 import ru.yandex.practicum.filmorate.storage.dao.ratingMpa.RatingMpaDao;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.LinkedList;
@@ -185,4 +186,17 @@ public class FilmService {
             throw new ErrorFilmException("Фильм не найден");
         }
     }
+
+    public List<Film> search(String query, List<String> by) {
+
+        try {
+            return new ArrayList<>(filmStorage.searchFilms(query, by));
+        } catch (EmptyResultDataAccessException exception) {
+            log.debug("Фильм с id {} не найден", query);
+            throw new ErrorFilmException("Фильм не найден");
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
 }
