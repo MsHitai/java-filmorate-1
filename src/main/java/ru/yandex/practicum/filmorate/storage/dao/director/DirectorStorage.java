@@ -5,5 +5,5 @@ import ru.yandex.practicum.filmorate.storage.dao.Storage;
 
 public interface DirectorStorage extends Storage<Director> {
 
-    void removeDirector(int id);
+    void removeDirector(long id);
 }

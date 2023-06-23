@@ -19,6 +19,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static ru.yandex.practicum.filmorate.service.EventsService.*;
+
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -29,17 +31,20 @@ public class FilmService {
     private final UserService userService;
     private final GenreService genreService;
     private final DirectorStorage directorStorage;
+    private final EventsService eventsService;
 
     public void addNewLike(long filmId, long userId) {
         contains(filmId);
         userService.findById(userId);
         likeDao.add(filmId, userId);
+        eventsService.addEvent(userId, filmId, LIKE_TYPE, ADD_OPERATION);
     }
 
     public void removeLike(long filmId, long userId) {
         contains(filmId);
         userService.findById(userId);
         likeDao.delete(filmId, userId);
+        eventsService.addEvent(userId, filmId, LIKE_TYPE, REMOVE_OPERATION);
     }
 
     public List<Film> getTopPopularFilms(int count, Integer genreId, Integer year) {
@@ -62,7 +67,7 @@ public class FilmService {
                     .filter(genre -> genre.getId() == genreId).map(genre -> film)
                     .forEach(sortedByGenre::add));
             return sortedByGenre;
-        } else if (genreId == null && year != null) {
+        } else if (genreId == null) {
             return result.stream()
                     .filter(film -> film.getReleaseDate().getYear() == year)
                     .collect(Collectors.toList());
@@ -81,7 +86,6 @@ public class FilmService {
 
         List<Long> filmIdsByUserId = likeDao.getFilmIdLikes(userId);
         List<Long> filmIdsByFriendId = likeDao.getFilmIdLikes(friendId);
-
         List<Film> result = new ArrayList<>();
 
         for (Long filmId : filmIdsByFriendId) {
@@ -165,6 +169,11 @@ public class FilmService {
         return directorFilms;
     }
 
+    public void deleteFilm(long id) {
+        contains(id);
+        filmStorage.delete(id);
+    }
+
     private int likeCompare(Film film, Film otherFilm) {
         return Integer.compare(likeDao.check(otherFilm.getId()), likeDao.check(film.getId()));
     }
@@ -176,11 +185,6 @@ public class FilmService {
             log.debug("Фильм с id {} не найден", filmId);
             throw new ErrorFilmException("Фильм не найден");
         }
-    }
-
-    public void deleteFilm(long id) {
-        contains(id);
-        filmStorage.delete(id);
     }
 
     public List<Film> search(String query, List<String> by) {

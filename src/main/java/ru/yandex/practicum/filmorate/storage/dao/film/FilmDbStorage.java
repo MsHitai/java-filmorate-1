@@ -27,7 +27,7 @@ public class FilmDbStorage implements FilmStorage {
 
     @Override
     public List<Film> findAll() {
-        List<Film> films = jdbcTemplate.query("select * from films", new FilmMapper());
+        List<Film> films = jdbcTemplate.query("SELECT * FROM films", new FilmMapper());
         log.debug("Количество фильмов: {}", films.size());
         return films;
     }
@@ -63,7 +63,7 @@ public class FilmDbStorage implements FilmStorage {
 
     @Override
     public Film findById(long filmId) {
-        return jdbcTemplate.queryForObject(format("select * from films where film_id = %d", filmId),
+        return jdbcTemplate.queryForObject(format("SELECT * FROM films WHERE film_id = %d", filmId),
                 new FilmMapper());
     }
 
