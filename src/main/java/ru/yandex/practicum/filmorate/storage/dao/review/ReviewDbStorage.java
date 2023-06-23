@@ -21,7 +21,7 @@ public class ReviewDbStorage implements ReviewStorage {
     private final JdbcTemplate jdbcTemplate;
 
     @Override
-    public Review add(Review review) {
+    public Review create(Review review) {
         SimpleJdbcInsert jdbcInsert = new SimpleJdbcInsert(jdbcTemplate);
         Map<String, Object> reviewFields = getReviewFields(review);
         Number generatedReviewId = jdbcInsert.withTableName("REVIEWS")
@@ -44,11 +44,11 @@ public class ReviewDbStorage implements ReviewStorage {
         if (rowsUpdate == 0) {
             throw new ErrorReviewException("Такого отзыва нет!");
         }
-        return get(review.getReviewId());
+        return findById(review.getReviewId());
     }
 
     @Override
-    public List<Review> getAllReviews() {
+    public List<Review> findAll() {
         String sql = "SELECT * FROM REVIEWS";
         return jdbcTemplate.query(sql, this::mapRowToReview);
     }
@@ -66,13 +66,9 @@ public class ReviewDbStorage implements ReviewStorage {
     }
 
     @Override
-    public Review get(Long id) {
-        String sql = "SELECT * FROM REVIEWS WHERE ID = ?";
-        try {
+    public Review findById(long id) {
+            String sql = "SELECT * FROM REVIEWS WHERE ID = ?";
             return jdbcTemplate.queryForObject(sql, this::mapRowToReview, id);
-        } catch (EmptyResultDataAccessException e) {
-            throw new ErrorReviewException("Такого отзыва нет!");
-        }
     }
 
     @Override
@@ -107,6 +103,15 @@ public class ReviewDbStorage implements ReviewStorage {
     public boolean deleteDislike(Long id, Long userId) {
         String sql = "DELETE FROM REVIEW_LIKES WHERE REVIEW_ID = ? AND USER_ID = ? AND RATING = -1";
         return jdbcTemplate.update(sql, id, userId) > 0;
+    }
+
+    public Review containsReview(Review review) {
+        try {
+            String sql = "SELECT * FROM reviews WHERE user_id = ? AND film_id = ?";
+            return jdbcTemplate.queryForObject(sql, this::mapRowToReview, review.getUserId(), review.getFilmId());
+        } catch (EmptyResultDataAccessException exception) {
+            return null;
+        }
     }
 
     private Map<String, Object> getReviewFields(Review review) {

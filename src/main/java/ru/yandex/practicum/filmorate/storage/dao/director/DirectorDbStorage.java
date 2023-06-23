@@ -12,6 +12,7 @@ import ru.yandex.practicum.filmorate.storage.mapper.DirectorMapper;
 
 import java.sql.PreparedStatement;
 import java.util.List;
+import java.util.Objects;
 
 @Component
 @RequiredArgsConstructor
@@ -35,7 +36,7 @@ public class DirectorDbStorage implements DirectorStorage {
             stmt.setString(1, director.getName());
             return stmt;
         }, keyHolder);
-        int idKey = keyHolder.getKey().intValue();
+        int idKey = Objects.requireNonNull(keyHolder.getKey()).intValue();
         director.setId(idKey);
         return director;
     }
@@ -67,7 +68,7 @@ public class DirectorDbStorage implements DirectorStorage {
     }
 
     @Override
-    public void removeDirector(int id) {
+    public void removeDirector(long id) {
         if (findById(id) == null) {
             throw new ErrorDirectorException("Невозможно удалить несуществующего режиссёра");
         }

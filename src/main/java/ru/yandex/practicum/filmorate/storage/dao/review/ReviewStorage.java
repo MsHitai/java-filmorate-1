@@ -1,22 +1,14 @@
 package ru.yandex.practicum.filmorate.storage.dao.review;
 
 import ru.yandex.practicum.filmorate.model.Review;
+import ru.yandex.practicum.filmorate.storage.dao.Storage;
 
 import java.util.List;
 
-public interface ReviewStorage {
-
-    Review add(Review review);
-
-    Review update(Review review);
-
-    List<Review> getAllReviews();
-
+public interface ReviewStorage extends Storage<Review> {
     List<Review> getAllReviewsByFilm(Long filmId);
 
     boolean delete(Long id);
-
-    Review get(Long id);
 
     boolean addLike(Long id, Long userId);
 
@@ -25,4 +17,6 @@ public interface ReviewStorage {
     boolean deleteLike(Long id, Long userId);
 
     boolean deleteDislike(Long id, Long userId);
+
+    Review containsReview(Review review);
 }

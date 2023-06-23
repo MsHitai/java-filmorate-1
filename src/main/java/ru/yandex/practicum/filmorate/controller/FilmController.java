@@ -1,7 +1,6 @@
 package ru.yandex.practicum.filmorate.controller;
 
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.service.FilmService;
@@ -11,7 +10,6 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Positive;
 import java.util.List;
 
-@Slf4j
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/films")
@@ -61,8 +59,8 @@ public class FilmController {
     }
 
     @GetMapping("/common")
-    public List<Film> getCommonPopularFilms(@RequestParam("userId") Long userId,
-                                            @RequestParam("friendId") Long friendId) {
+    public List<Film> getCommonPopularFilms(@RequestParam("userId") long userId,
+                                            @RequestParam("friendId") long friendId) {
         return filmService.getCommonPopularFilms(userId, friendId);
     }
 

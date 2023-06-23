@@ -29,7 +29,7 @@ public class DirectorService {
         return directorStorage.findById(id);
     }
 
-    public void removeDirector(int id) {
+    public void removeDirector(long id) {
         directorStorage.removeDirector(id);
     }
 }
