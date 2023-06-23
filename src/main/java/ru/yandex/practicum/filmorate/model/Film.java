@@ -31,15 +31,24 @@ public class Film {
     @NotNull(message = "Должен быть указан рейтинг MPA")
     private Mpa mpa;
     private Set<Genre> genres = new HashSet<>();
+    private int rate;
     private Set<Director> directors = new HashSet<>();
 
     @Builder
-    public Film(long id, String name, String description, LocalDate releaseDate, int duration, Mpa mpa) {
+    public Film(long id,
+                String name,
+                String description,
+                LocalDate releaseDate,
+                int duration, Mpa mpa,
+                int rate) {
+
         this.id = id;
         this.name = name;
         this.description = description;
         this.releaseDate = releaseDate;
         this.duration = duration;
         this.mpa = mpa;
+        this.rate = rate;
     }
+
 }

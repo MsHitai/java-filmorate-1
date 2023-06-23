@@ -9,6 +9,7 @@ import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.storage.mapper.DirectorMapper;
 import ru.yandex.practicum.filmorate.storage.mapper.FilmMapper;
+import ru.yandex.practicum.filmorate.storage.mapper.FilmSearchMapper;
 import ru.yandex.practicum.filmorate.storage.mapper.GenreMapper;
 
 import java.sql.Date;
@@ -146,4 +147,52 @@ public class FilmDbStorage implements FilmStorage {
                 film.getDuration(),
                 film.getMpa().getId()), new FilmMapper());
     }
+
+    @Override
+    public List<Film> searchFilms(String query, List<String> by) {
+        String sqlQuery =
+                "SELECT F.FILM_ID                                                        AS film_id, " +
+                        "       F.NAME                                                           AS name, " +
+                        "       F.DESCRIPTION                                                    AS description, " +
+                        "       F.RELEASE_DATE                                                   AS release_date, " +
+                        "       F.DURATION                                                       AS duration, " +
+                        "       RM.RATING_ID                                                     AS mpa_id, " +
+                        "       RM.NAME                                                          AS mpa_name, " +
+                        "       GROUP_CONCAT(D.DIRECTOR_ID ORDER BY D.DIRECTOR_ID SEPARATOR ';') AS director_id, " +
+                        "       GROUP_CONCAT(D.NAME ORDER BY D.NAME SEPARATOR ';')               AS director_name, " +
+                        "       GROUP_CONCAT(G.GENRE_ID ORDER BY D.DIRECTOR_ID SEPARATOR ';')    AS genre_id, " +
+                        "       GROUP_CONCAT(G.NAME ORDER BY D.NAME SEPARATOR ';')               AS genre_name, " +
+                        "       COUNT(L.FILM_ID)                                                 AS like_count " +
+                        "FROM PUBLIC.FILMS AS F " +
+                        "         LEFT JOIN PUBLIC.LIKES L ON F.FILM_ID = L.FILM_ID " +
+                        "         LEFT JOIN PUBLIC.FILMS_DIRECTORS FD ON F.FILM_ID = FD.FILM_ID " +
+                        "         LEFT JOIN PUBLIC.DIRECTORS AS D ON FD.DIRECTOR_ID = D.DIRECTOR_ID " +
+                        "         LEFT JOIN PUBLIC.RATINGS_MPA RM ON F.RATING_ID = RM.RATING_ID " +
+                        "         LEFT JOIN PUBLIC.FILM_GENRES FG ON F.FILM_ID = FG.FILM_ID " +
+                        "         LEFT JOIN PUBLIC.GENRES G ON FG.GENRE_ID = G.GENRE_ID " +
+                        "GROUP BY F.FILM_ID " +
+                        "HAVING " +
+                        " %s " +
+                        "ORDER BY COUNT(L.FILM_ID) DESC";
+
+        String sqlHaving = "";
+        String logicalOperator = " OR ";
+
+        if (by.contains("title")) {
+            sqlHaving = "F.DESCRIPTION LIKE '%" + query.toLowerCase() + "%'";
+            if (by.size() == 2) {
+                sqlHaving = sqlHaving + logicalOperator;
+            }
+        }
+
+        if (by.contains("director")) {
+            sqlHaving = sqlHaving + "D.NAME LIKE '%" + query.toLowerCase() + "%'";
+        }
+
+        List<Film> films = jdbcTemplate.query(format(sqlQuery, sqlHaving), new FilmSearchMapper());
+
+        log.debug("Количество фильмов: {}", films.size());
+        return films;
+    }
+
 }
