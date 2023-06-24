@@ -190,7 +190,13 @@ public class FilmService {
     public List<Film> search(String query, List<String> by) {
 
         try {
-            return new ArrayList<>(filmStorage.searchFilms(query, by));
+            List<Film> films = filmStorage.searchFilms(query, by);
+            films.forEach(film -> {
+                film.setGenres(filmStorage.findGenres(film.getId()));
+                film.setMpa(ratingMpa.findById(film.getMpa().getId()));
+                film.setDirectors(filmStorage.findDirectors(film.getId()));
+            });
+            return films;
         } catch (EmptyResultDataAccessException exception) {
             log.debug("Фильм с id {} не найден", query);
             throw new ErrorFilmException("Фильм не найден");

@@ -9,7 +9,6 @@ import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.storage.mapper.DirectorMapper;
 import ru.yandex.practicum.filmorate.storage.mapper.FilmMapper;
-import ru.yandex.practicum.filmorate.storage.mapper.FilmSearchMapper;
 import ru.yandex.practicum.filmorate.storage.mapper.GenreMapper;
 
 import java.sql.Date;
@@ -189,7 +188,7 @@ public class FilmDbStorage implements FilmStorage {
             sqlHaving = sqlHaving + "D.NAME LIKE '%" + query.toLowerCase() + "%'";
         }
 
-        List<Film> films = jdbcTemplate.query(format(sqlQuery, sqlHaving), new FilmSearchMapper());
+        List<Film> films = jdbcTemplate.query(format(sqlQuery, sqlHaving), new FilmMapper());
 
         log.debug("Количество фильмов: {}", films.size());
         return films;
