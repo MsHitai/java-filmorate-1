@@ -15,7 +15,7 @@ import static java.lang.String.format;
 @Slf4j
 @Repository
 @RequiredArgsConstructor
-public class RatingMpaDaoImpl implements RatingMpaDao {
+public class RatingMpaDbStorage implements RatingMpaStorage {
     private final JdbcTemplate jdbcTemplate;
 
     @Override

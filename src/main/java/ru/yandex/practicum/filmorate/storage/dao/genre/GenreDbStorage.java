@@ -15,7 +15,7 @@ import static java.lang.String.format;
 @Slf4j
 @Repository
 @RequiredArgsConstructor
-public class GenreDaoImpl implements GenreDao {
+public class GenreDbStorage implements GenreStorage {
     private final JdbcTemplate jdbcTemplate;
 
     @Override

@@ -4,7 +4,7 @@ import ru.yandex.practicum.filmorate.model.Friends;
 
 import java.util.Set;
 
-public interface FriendsDao {
+public interface FriendsStorage {
     void add(long userId, long friendId, boolean isMutual);
 
     void delete(long userId, long friendId);

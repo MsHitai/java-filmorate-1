@@ -17,7 +17,7 @@ import static java.lang.String.format;
 @Slf4j
 @Repository
 @RequiredArgsConstructor
-public class FriendsDaoImpl implements FriendsDao {
+public class FriendsDbStorage implements FriendsStorage {
     private final JdbcTemplate jdbcTemplate;
 
     @Override

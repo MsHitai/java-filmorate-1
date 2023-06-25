@@ -2,7 +2,7 @@ package ru.yandex.practicum.filmorate.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import ru.yandex.practicum.filmorate.storage.dao.events.EventsDao;
+import ru.yandex.practicum.filmorate.storage.dao.events.EventsStorage;
 
 import java.util.Calendar;
 
@@ -16,10 +16,10 @@ public class EventsService {
     public static final String REMOVE_OPERATION = "REMOVE";
     public static final String UPDATE_OPERATION = "UPDATE";
 
-    private final EventsDao eventsDao;
+    private final EventsStorage eventsStorage;
 
     public void addEvent(long userId, long entityId, String eventType, String operation) {
-        eventsDao.addEvent(findTimestamp(), userId, eventType, operation, entityId);
+        eventsStorage.addEvent(findTimestamp(), userId, eventType, operation, entityId);
     }
 
     private Long findTimestamp() {

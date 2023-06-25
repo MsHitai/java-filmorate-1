@@ -14,7 +14,7 @@ import static java.lang.String.format;
 @Slf4j
 @Repository
 @RequiredArgsConstructor
-public class EventsDaoImpl implements EventsDao {
+public class EventsDbStorage implements EventsStorage {
     private final JdbcTemplate jdbcTemplate;
 
     public List<Event> getUserEvents(long userId) {

@@ -16,6 +16,7 @@ import java.util.Set;
 
 @Data
 @Validated
+@Builder
 public class Film {
     private long id;
     @NotBlank(message = "Название не должно быть пустым")
@@ -30,25 +31,8 @@ public class Film {
     private int duration;
     @NotNull(message = "Должен быть указан рейтинг MPA")
     private Mpa mpa;
-    private Set<Genre> genres = new HashSet<>();
+    private Set<Genre> genres;
     private int rate;
-    private Set<Director> directors = new HashSet<>();
-
-    @Builder
-    public Film(long id,
-                String name,
-                String description,
-                LocalDate releaseDate,
-                int duration, Mpa mpa,
-                int rate) {
-
-        this.id = id;
-        this.name = name;
-        this.description = description;
-        this.releaseDate = releaseDate;
-        this.duration = duration;
-        this.mpa = mpa;
-        this.rate = rate;
-    }
+    private Set<Director> directors;
 
 }

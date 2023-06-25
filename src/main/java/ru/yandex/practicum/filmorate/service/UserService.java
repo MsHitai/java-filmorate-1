@@ -8,11 +8,11 @@ import ru.yandex.practicum.filmorate.exception.ErrorUserException;
 import ru.yandex.practicum.filmorate.model.Event;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.User;
-import ru.yandex.practicum.filmorate.storage.dao.events.EventsDao;
+import ru.yandex.practicum.filmorate.storage.dao.events.EventsStorage;
 import ru.yandex.practicum.filmorate.storage.dao.film.FilmStorage;
-import ru.yandex.practicum.filmorate.storage.dao.friends.FriendsDao;
-import ru.yandex.practicum.filmorate.storage.dao.like.LikeDao;
-import ru.yandex.practicum.filmorate.storage.dao.ratingMpa.RatingMpaDao;
+import ru.yandex.practicum.filmorate.storage.dao.friends.FriendsStorage;
+import ru.yandex.practicum.filmorate.storage.dao.like.LikeStorage;
+import ru.yandex.practicum.filmorate.storage.dao.ratingMpa.RatingMpaStorage;
 import ru.yandex.practicum.filmorate.storage.dao.user.UserStorage;
 
 import java.util.ArrayList;
@@ -26,29 +26,29 @@ import static ru.yandex.practicum.filmorate.service.EventsService.*;
 @RequiredArgsConstructor
 public class UserService {
     private final UserStorage userStorage;
-    private final FriendsDao friendsDao;
-    private final LikeDao likeDao;
+    private final FriendsStorage friendsStorage;
+    private final LikeStorage likeStorage;
     private final FilmStorage filmStorage;
-    private final EventsDao eventsDao;
+    private final EventsStorage eventsStorage;
     private final EventsService eventsService;
-    private final RatingMpaDao ratingMpaDao;
+    private final RatingMpaStorage ratingMpaStorage;
 
     public void addNewFriend(long id, long friendId) {
         contains(id);
         contains(friendId);
-        boolean isMutual = friendsDao.get(friendId, id) != null;
-        friendsDao.add(id, friendId, isMutual);
+        boolean isMutual = friendsStorage.get(friendId, id) != null;
+        friendsStorage.add(id, friendId, isMutual);
         eventsService.addEvent(id, friendId, FRIEND_TYPE, ADD_OPERATION);
     }
 
     public void removeFriend(long id, long friendId) {
-        friendsDao.delete(id, friendId);
+        friendsStorage.delete(id, friendId);
         eventsService.addEvent(id, friendId, FRIEND_TYPE, REMOVE_OPERATION);
     }
 
     public List<User> getFriends(long id) {
         contains(id);
-        return friendsDao.getFriends(id).stream()
+        return friendsStorage.getFriends(id).stream()
                 .mapToLong(Long::valueOf)
                 .mapToObj(this::findById)
                 .collect(Collectors.toList());
@@ -85,7 +85,7 @@ public class UserService {
 
     public List<Event> findFeedEvents(long userId) {
         contains(userId);
-        return eventsDao.getUserEvents(userId);
+        return eventsStorage.getUserEvents(userId);
     }
 
     public List<Film> getRecommendFilms(long userId) {
@@ -99,7 +99,7 @@ public class UserService {
                     userIdFilms.add(filmId);
                     Film film = filmStorage.findById(filmId);
                     film.setGenres(filmStorage.findGenres(filmId));
-                    film.setMpa(ratingMpaDao.findById(film.getMpa().getId()));
+                    film.setMpa(ratingMpaStorage.findById(film.getMpa().getId()));
                     films.add(film);
                 }));
         return films;
@@ -126,7 +126,7 @@ public class UserService {
     }
 
     private List<Long> getLikedFilmsForUser(long id) {
-        return likeDao.getFilmIdLikes(id);
+        return likeStorage.getFilmIdLikes(id);
     }
 
     private Integer getIntersection(long userId, long anotherUserId) {

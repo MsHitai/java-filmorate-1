@@ -68,11 +68,13 @@ public class FilmDbStorage implements FilmStorage {
 
     @Override
     public void addGenres(long filmId, Set<Genre> genres) {
-        genres.forEach(genre -> {
-            jdbcTemplate.update("INSERT INTO film_genres (film_id, genre_id) VALUES (?, ?)",
-                    filmId, genre.getId());
-            log.debug("Фильму {} добавлен жанр {}", filmId, genre.getId());
-        });
+        if (genres != null) {
+            genres.forEach(genre -> {
+                jdbcTemplate.update("INSERT INTO film_genres (film_id, genre_id) VALUES (?, ?)",
+                        filmId, genre.getId());
+                log.debug("Фильму {} добавлен жанр {}", filmId, genre.getId());
+            });
+        }
     }
 
     @Override
@@ -100,11 +102,13 @@ public class FilmDbStorage implements FilmStorage {
 
     @Override
     public void addDirectors(long filmId, Set<Director> directors) {
-        directors.forEach(director -> {
-            jdbcTemplate.update("INSERT INTO films_directors (film_id, director_id) VALUES (?, ?)",
-                    filmId, director.getId());
-            log.debug("Фильму {} добавлен режиссёр {}", filmId, director.getId());
-        });
+        if (directors != null) {
+            directors.forEach(director -> {
+                jdbcTemplate.update("INSERT INTO films_directors (film_id, director_id) VALUES (?, ?)",
+                        filmId, director.getId());
+                log.debug("Фильму {} добавлен режиссёр {}", filmId, director.getId());
+            });
+        }
     }
 
     @Override

@@ -9,8 +9,9 @@ import ru.yandex.practicum.filmorate.exception.ErrorFilmException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.storage.dao.director.DirectorStorage;
 import ru.yandex.practicum.filmorate.storage.dao.film.FilmStorage;
-import ru.yandex.practicum.filmorate.storage.dao.like.LikeDao;
-import ru.yandex.practicum.filmorate.storage.dao.ratingMpa.RatingMpaDao;
+import ru.yandex.practicum.filmorate.storage.dao.genre.GenreStorage;
+import ru.yandex.practicum.filmorate.storage.dao.like.LikeStorage;
+import ru.yandex.practicum.filmorate.storage.dao.ratingMpa.RatingMpaStorage;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -26,24 +27,19 @@ import static ru.yandex.practicum.filmorate.service.EventsService.*;
 @RequiredArgsConstructor
 public class FilmService {
     private final FilmStorage filmStorage;
-    private final RatingMpaDao ratingMpa;
-    private final LikeDao likeDao;
-    private final UserService userService;
-    private final GenreService genreService;
+    private final RatingMpaStorage ratingMpa;
+    private final LikeStorage likeStorage;
+    private final GenreStorage genreStorage;
     private final DirectorStorage directorStorage;
-    private final EventsService eventsService;
+    private final EventsService eventsService; // todo исправить на eventsStorage
 
     public void addNewLike(long filmId, long userId) {
-        contains(filmId);
-        userService.findById(userId);
-        likeDao.add(filmId, userId);
+        likeStorage.add(filmId, userId);
         eventsService.addEvent(userId, filmId, LIKE_TYPE, ADD_OPERATION);
     }
 
     public void removeLike(long filmId, long userId) {
-        contains(filmId);
-        userService.findById(userId);
-        likeDao.delete(filmId, userId);
+        likeStorage.delete(filmId, userId);
         eventsService.addEvent(userId, filmId, LIKE_TYPE, REMOVE_OPERATION);
     }
 
@@ -61,7 +57,7 @@ public class FilmService {
         if (genreId == null && year == null) {
             return result;
         } else if (genreId != null && year == null) {
-            genreService.findById(genreId);
+            genreStorage.findById(genreId);
             List<Film> sortedByGenre = new ArrayList<>();
             result.forEach(film -> film.getGenres().stream()
                     .filter(genre -> genre.getId() == genreId).map(genre -> film)
@@ -81,11 +77,8 @@ public class FilmService {
     }
 
     public List<Film> getCommonPopularFilms(long userId, long friendId) {
-        userService.findById(userId);
-        userService.findById(friendId);
-
-        List<Long> filmIdsByUserId = likeDao.getFilmIdLikes(userId);
-        List<Long> filmIdsByFriendId = likeDao.getFilmIdLikes(friendId);
+        List<Long> filmIdsByUserId = likeStorage.getFilmIdLikes(userId);
+        List<Long> filmIdsByFriendId = likeStorage.getFilmIdLikes(friendId);
         List<Film> result = new ArrayList<>();
 
         for (Long filmId : filmIdsByFriendId) {
@@ -175,7 +168,7 @@ public class FilmService {
     }
 
     private int likeCompare(Film film, Film otherFilm) {
-        return Integer.compare(likeDao.check(otherFilm.getId()), likeDao.check(film.getId()));
+        return Integer.compare(likeStorage.check(otherFilm.getId()), likeStorage.check(film.getId()));
     }
 
     private Film contains(long filmId) {

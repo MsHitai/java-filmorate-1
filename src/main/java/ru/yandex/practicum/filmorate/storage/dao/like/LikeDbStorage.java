@@ -13,7 +13,7 @@ import static java.lang.String.format;
 @Slf4j
 @Repository
 @RequiredArgsConstructor
-public class LikeDaoImpl implements LikeDao {
+public class LikeDbStorage implements LikeStorage {
     private final JdbcTemplate jdbcTemplate;
 
     @Override
