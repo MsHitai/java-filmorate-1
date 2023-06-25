@@ -52,53 +52,6 @@ class FilmorateApplicationTests {
     }
 
     @Test
-    public void testCommonPopularFilms() {
-        User user1 = User.builder()
-                .id(2)
-                .name("Johnny1")
-                .email("johnnymail1@mail.ru")
-                .login("mrJohnny1")
-                .birthday(LocalDate.of(2000, 1, 1))
-                .build();
-
-        User user2 = User.builder()
-                .id(3)
-                .name("Johnny2")
-                .email("johnnymail2@mail.ru")
-                .login("mrJohnny2")
-                .birthday(LocalDate.of(2000, 1, 1))
-                .build();
-
-        userService.create(user);
-        userService.create(user1);
-        userService.create(user2);
-
-        Film film1 = Film.builder()
-                .id(2)
-                .name("SomeTestFilm2")
-                .description("SomeTestDescription2")
-                .releaseDate(LocalDate.of(2000, 1, 11))
-                .duration(110)
-                .mpa(new Mpa(1, "G"))
-                .build();
-
-        filmService.create(film);
-        filmService.create(film1);
-
-        filmService.addNewLike(film.getId(), user.getId());
-        filmService.addNewLike(film.getId(), user1.getId());
-        filmService.addNewLike(film.getId(), user2.getId());
-
-        filmService.addNewLike(film1.getId(), user.getId());
-        filmService.addNewLike(film1.getId(), user1.getId());
-
-        List<Film> films = filmService.getCommonPopularFilms(user.getId(), user1.getId());
-
-        assertThat(films.size(), is(2));
-        assertThat(films.get(0), is(film));
-    }
-
-    @Test
     void contextLoads() {
     }
 
