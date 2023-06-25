@@ -8,18 +8,19 @@ import ru.yandex.practicum.filmorate.exception.ErrorUserException;
 import ru.yandex.practicum.filmorate.model.Event;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.User;
-import ru.yandex.practicum.filmorate.storage.dao.events.EventsStorage;
-import ru.yandex.practicum.filmorate.storage.dao.film.FilmStorage;
-import ru.yandex.practicum.filmorate.storage.dao.friends.FriendsStorage;
-import ru.yandex.practicum.filmorate.storage.dao.like.LikeStorage;
-import ru.yandex.practicum.filmorate.storage.dao.ratingMpa.RatingMpaStorage;
-import ru.yandex.practicum.filmorate.storage.dao.user.UserStorage;
+import ru.yandex.practicum.filmorate.storage.events.EventsStorage;
+import ru.yandex.practicum.filmorate.storage.film.FilmStorage;
+import ru.yandex.practicum.filmorate.storage.friends.FriendsStorage;
+import ru.yandex.practicum.filmorate.storage.like.LikeStorage;
+import ru.yandex.practicum.filmorate.storage.ratingMpa.RatingMpaStorage;
+import ru.yandex.practicum.filmorate.storage.user.UserStorage;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static ru.yandex.practicum.filmorate.service.EventsService.*;
+import static ru.yandex.practicum.filmorate.enums.Operation.*;
+import static ru.yandex.practicum.filmorate.enums.EventType.*;
 
 @Slf4j
 @Service
@@ -30,7 +31,6 @@ public class UserService {
     private final LikeStorage likeStorage;
     private final FilmStorage filmStorage;
     private final EventsStorage eventsStorage;
-    private final EventsService eventsService;
     private final RatingMpaStorage ratingMpaStorage;
 
     public void addNewFriend(long id, long friendId) {
@@ -38,12 +38,12 @@ public class UserService {
         contains(friendId);
         boolean isMutual = friendsStorage.get(friendId, id) != null;
         friendsStorage.add(id, friendId, isMutual);
-        eventsService.addEvent(id, friendId, FRIEND_TYPE, ADD_OPERATION);
+        eventsStorage.addEvent(id, friendId, FRIEND.name(), ADD.name());
     }
 
     public void removeFriend(long id, long friendId) {
         friendsStorage.delete(id, friendId);
-        eventsService.addEvent(id, friendId, FRIEND_TYPE, REMOVE_OPERATION);
+        eventsStorage.addEvent(id, friendId, FRIEND.name(), REMOVE.name());
     }
 
     public List<User> getFriends(long id) {

@@ -6,7 +6,7 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exception.ErrorRatingMpaException;
 import ru.yandex.practicum.filmorate.model.Mpa;
-import ru.yandex.practicum.filmorate.storage.dao.ratingMpa.RatingMpaStorage;
+import ru.yandex.practicum.filmorate.storage.ratingMpa.RatingMpaStorage;
 
 import java.util.List;
 

@@ -7,11 +7,12 @@ import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exception.ErrorDirectorException;
 import ru.yandex.practicum.filmorate.exception.ErrorFilmException;
 import ru.yandex.practicum.filmorate.model.Film;
-import ru.yandex.practicum.filmorate.storage.dao.director.DirectorStorage;
-import ru.yandex.practicum.filmorate.storage.dao.film.FilmStorage;
-import ru.yandex.practicum.filmorate.storage.dao.genre.GenreStorage;
-import ru.yandex.practicum.filmorate.storage.dao.like.LikeStorage;
-import ru.yandex.practicum.filmorate.storage.dao.ratingMpa.RatingMpaStorage;
+import ru.yandex.practicum.filmorate.storage.director.DirectorStorage;
+import ru.yandex.practicum.filmorate.storage.events.EventsStorage;
+import ru.yandex.practicum.filmorate.storage.film.FilmStorage;
+import ru.yandex.practicum.filmorate.storage.genre.GenreStorage;
+import ru.yandex.practicum.filmorate.storage.like.LikeStorage;
+import ru.yandex.practicum.filmorate.storage.ratingMpa.RatingMpaStorage;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -20,27 +21,28 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static ru.yandex.practicum.filmorate.service.EventsService.*;
+import static ru.yandex.practicum.filmorate.enums.Operation.*;
+import static ru.yandex.practicum.filmorate.enums.EventType.*;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class FilmService {
     private final FilmStorage filmStorage;
-    private final RatingMpaStorage ratingMpa;
+    private final RatingMpaStorage ratingMpaStorage;
     private final LikeStorage likeStorage;
     private final GenreStorage genreStorage;
     private final DirectorStorage directorStorage;
-    private final EventsService eventsService; // todo исправить на eventsStorage
+    private final EventsStorage eventsStorage;
 
     public void addNewLike(long filmId, long userId) {
         likeStorage.add(filmId, userId);
-        eventsService.addEvent(userId, filmId, LIKE_TYPE, ADD_OPERATION);
+        eventsStorage.addEvent(userId, filmId, LIKE.name(), ADD.name());
     }
 
     public void removeLike(long filmId, long userId) {
         likeStorage.delete(filmId, userId);
-        eventsService.addEvent(userId, filmId, LIKE_TYPE, REMOVE_OPERATION);
+        eventsStorage.addEvent(userId, filmId, LIKE.name(), REMOVE.name());
     }
 
     public List<Film> getTopPopularFilms(int count, Integer genreId, Integer year) {
@@ -50,7 +52,7 @@ public class FilmService {
 
         result.forEach(film -> {
             film.setGenres(filmStorage.findGenres(film.getId()));
-            film.setMpa(ratingMpa.findById(film.getMpa().getId()));
+            film.setMpa(ratingMpaStorage.findById(film.getMpa().getId()));
             film.setDirectors(filmStorage.findDirectors(film.getId()));
         });
 
@@ -91,7 +93,7 @@ public class FilmService {
                 .sorted(this::likeCompare)
                 .forEach(film -> {
                     film.setGenres(filmStorage.findGenres(film.getId()));
-                    film.setMpa(ratingMpa.findById(film.getMpa().getId()));
+                    film.setMpa(ratingMpaStorage.findById(film.getMpa().getId()));
                 });
 
         return result;
@@ -101,7 +103,7 @@ public class FilmService {
         List<Film> films = filmStorage.findAll();
         films.forEach(film -> {
             film.setGenres(filmStorage.findGenres(film.getId()));
-            film.setMpa(ratingMpa.findById(film.getMpa().getId()));
+            film.setMpa(ratingMpaStorage.findById(film.getMpa().getId()));
             film.setDirectors(filmStorage.findDirectors(film.getId()));
         });
         return films;
@@ -121,7 +123,7 @@ public class FilmService {
         Film result = filmStorage.update(film);
         filmStorage.updateGenres(result.getId(), film.getGenres());
         result.setGenres(filmStorage.findGenres(result.getId()));
-        result.setMpa(ratingMpa.findById(result.getMpa().getId()));
+        result.setMpa(ratingMpaStorage.findById(result.getMpa().getId()));
         filmStorage.updateDirectors(result.getId(), film.getDirectors());
         result.setDirectors(filmStorage.findDirectors(result.getId()));
         return result;
@@ -130,7 +132,7 @@ public class FilmService {
     public Film findById(long filmId) {
         Film result = contains(filmId);
         result.setGenres(filmStorage.findGenres(filmId));
-        result.setMpa(ratingMpa.findById(result.getMpa().getId()));
+        result.setMpa(ratingMpaStorage.findById(result.getMpa().getId()));
         result.setDirectors(filmStorage.findDirectors(filmId));
         return result;
     }
@@ -145,7 +147,7 @@ public class FilmService {
                     .sorted(Comparator.comparing(Film::getReleaseDate))
                     .collect(Collectors.toList());
             directorFilms.forEach(film -> {
-                film.setMpa(ratingMpa.findById(film.getMpa().getId()));
+                film.setMpa(ratingMpaStorage.findById(film.getMpa().getId()));
                 film.setDirectors(filmStorage.findDirectors(film.getId()));
                 film.setGenres(filmStorage.findGenres(film.getId()));
             });
@@ -154,7 +156,7 @@ public class FilmService {
                     .sorted(this::likeCompare)
                     .collect(Collectors.toList());
             directorFilms.forEach(film -> {
-                film.setMpa(ratingMpa.findById(film.getMpa().getId()));
+                film.setMpa(ratingMpaStorage.findById(film.getMpa().getId()));
                 film.setDirectors(filmStorage.findDirectors(film.getId()));
                 film.setGenres(filmStorage.findGenres(film.getId()));
             });
@@ -186,7 +188,7 @@ public class FilmService {
             List<Film> films = filmStorage.searchFilms(query, by);
             films.forEach(film -> {
                 film.setGenres(filmStorage.findGenres(film.getId()));
-                film.setMpa(ratingMpa.findById(film.getMpa().getId()));
+                film.setMpa(ratingMpaStorage.findById(film.getMpa().getId()));
                 film.setDirectors(filmStorage.findDirectors(film.getId()));
             });
             return films;
